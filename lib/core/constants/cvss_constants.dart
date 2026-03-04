@@ -1,5 +1,5 @@
-/// CVSS v3.1 Official Metric Values
-/// Reference: https://www.first.org/cvss/v3.1/specification-document
+// CVSS v3.1 Official Metric Values
+// Reference: https://www.first.org/cvss/v3.1/specification-document
 
 // ---------------------------------------------------------------------------
 // Attack Vector (AV)
