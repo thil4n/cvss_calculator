@@ -6,7 +6,7 @@ import 'package:cvss_calculator/core/theme/app_theme.dart';
 class MetricChoiceChipRow extends StatelessWidget {
   final String title;
   final Map<String, String> options; // abbreviation → label
-  final String selectedValue;
+  final String? selectedValue;
   final ValueChanged<String> onSelected;
 
   const MetricChoiceChipRow({

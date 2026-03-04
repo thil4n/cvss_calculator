@@ -7,13 +7,15 @@ import 'package:cvss_calculator/core/constants/severity_levels.dart';
 import 'package:cvss_calculator/core/theme/app_theme.dart';
 
 class ScoreCircle extends StatelessWidget {
-  final double score;
+  final double? score;
 
   const ScoreCircle({super.key, required this.score});
 
   @override
   Widget build(BuildContext context) {
-    final severity = Severity.fromScore(score);
+    final displayScore = score ?? 0.0;
+    final severity = Severity.fromScore(displayScore);
+    final bool hasScore = score != null;
 
     return Card(
       child: Padding(
@@ -34,7 +36,7 @@ class ScoreCircle extends StatelessWidget {
             ),
             const SizedBox(height: 24),
             TweenAnimationBuilder<double>(
-              tween: Tween(begin: 0, end: score),
+              tween: Tween(begin: 0, end: displayScore),
               duration: const Duration(milliseconds: 600),
               curve: Curves.easeOutCubic,
               builder: (context, animatedScore, child) {
@@ -45,15 +47,21 @@ class ScoreCircle extends StatelessWidget {
                   child: CustomPaint(
                     painter: _ScoreRingPainter(
                       score: animatedScore,
-                      color: animSeverity.color,
+                      color: hasScore
+                          ? animSeverity.color
+                          : const Color(0xFF334155),
                     ),
                     child: Center(
                       child: Text(
-                        animatedScore.toStringAsFixed(1),
+                        hasScore
+                            ? animatedScore.toStringAsFixed(1)
+                            : '—',
                         style: GoogleFonts.inter(
                           fontSize: 48,
                           fontWeight: FontWeight.w700,
-                          color: animSeverity.color,
+                          color: hasScore
+                              ? animSeverity.color
+                              : AppColors.textMuted,
                         ),
                       ),
                     ),
@@ -66,15 +74,17 @@ class ScoreCircle extends StatelessWidget {
               duration: const Duration(milliseconds: 400),
               padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 6),
               decoration: BoxDecoration(
-                color: severity.color.withValues(alpha: 0.15),
+                color: hasScore
+                    ? severity.color.withValues(alpha: 0.15)
+                    : const Color(0xFF334155).withValues(alpha: 0.3),
                 borderRadius: BorderRadius.circular(20),
               ),
               child: Text(
-                severity.label,
+                hasScore ? severity.label : 'Select metrics',
                 style: GoogleFonts.inter(
                   fontSize: 15,
                   fontWeight: FontWeight.w700,
-                  color: severity.color,
+                  color: hasScore ? severity.color : AppColors.textMuted,
                   letterSpacing: 0.8,
                 ),
               ),

@@ -5,7 +5,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:cvss_calculator/core/theme/app_theme.dart';
 
 class VectorDisplay extends StatelessWidget {
-  final String vector;
+  final String? vector;
 
   const VectorDisplay({super.key, required this.vector});
 
@@ -31,7 +31,7 @@ class VectorDisplay extends StatelessWidget {
                 ),
                 const Spacer(),
                 IconButton(
-                  onPressed: () => _copyVector(context),
+                  onPressed: vector != null ? () => _copyVector(context) : null,
                   icon: const Icon(Icons.copy_rounded, size: 18),
                   color: AppColors.textSecondary,
                   tooltip: 'Copy vector string',
@@ -55,7 +55,7 @@ class VectorDisplay extends StatelessWidget {
                 border: Border.all(color: AppColors.cardBorder),
               ),
               child: SelectableText(
-                vector,
+                vector ?? 'CVSS:3.1/AV:_/AC:_/PR:_/UI:_/S:_/C:_/I:_/A:_',
                 style: GoogleFonts.firaCode(
                   fontSize: 13,
                   fontWeight: FontWeight.w500,
@@ -71,7 +71,8 @@ class VectorDisplay extends StatelessWidget {
   }
 
   void _copyVector(BuildContext context) {
-    Clipboard.setData(ClipboardData(text: vector));
+    if (vector == null) return;
+    Clipboard.setData(ClipboardData(text: vector!));
     ScaffoldMessenger.of(context)
       ..clearSnackBars()
       ..showSnackBar(

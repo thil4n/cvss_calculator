@@ -7,7 +7,10 @@ import 'package:cvss_calculator/features/cvss/model/cvss_metrics.dart';
 void main() {
   group('CvssCalculator', () {
     test('all None impact yields 0.0', () {
-      final metrics = CvssMetrics.defaults();
+      const metrics = CvssMetrics(
+        av: 'N', ac: 'L', pr: 'N', ui: 'N',
+        scope: 'U', c: 'N', i: 'N', a: 'N',
+      );
       expect(CvssCalculator.calculate(metrics), 0.0);
     });
 
@@ -44,6 +47,29 @@ void main() {
     });
   });
 
+  group('CvssMetrics', () {
+    test('empty has no selection', () {
+      const metrics = CvssMetrics.empty();
+      expect(metrics.hasAnySelection, false);
+      expect(metrics.isComplete, false);
+    });
+
+    test('partial selection detected', () {
+      const metrics = CvssMetrics(av: 'N');
+      expect(metrics.hasAnySelection, true);
+      expect(metrics.isComplete, false);
+    });
+
+    test('resolved fills defaults', () {
+      const metrics = CvssMetrics(av: 'P');
+      final resolved = metrics.resolved();
+      expect(resolved.av, 'P');
+      expect(resolved.c, 'H');
+      expect(resolved.i, 'H');
+      expect(resolved.a, 'H');
+    });
+  });
+
   group('VectorBuilder', () {
     test('builds correct vector string', () {
       const metrics = CvssMetrics(
@@ -53,6 +79,14 @@ void main() {
       expect(
         VectorBuilder.build(metrics),
         'CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:L',
+      );
+    });
+
+    test('unselected metrics show as underscore', () {
+      const metrics = CvssMetrics(av: 'N');
+      expect(
+        VectorBuilder.build(metrics),
+        'CVSS:3.1/AV:N/AC:_/PR:_/UI:_/S:_/C:_/I:_/A:_',
       );
     });
   });

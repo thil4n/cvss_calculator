@@ -7,11 +7,21 @@ import 'package:cvss_calculator/features/cvss/model/cvss_metrics.dart';
 /// Lightweight state management using ValueNotifier.
 /// Holds the current CVSS metrics and exposes derived score + vector.
 class CvssNotifier extends ChangeNotifier {
-  CvssMetrics _metrics = CvssMetrics.defaults();
+  CvssMetrics _metrics = const CvssMetrics.empty();
 
   CvssMetrics get metrics => _metrics;
-  double get score => CvssCalculator.calculate(_metrics);
-  String get vector => VectorBuilder.build(_metrics);
+
+  /// Returns the score, or null if no metric has been selected yet.
+  double? get score {
+    if (!_metrics.hasAnySelection) return null;
+    return CvssCalculator.calculate(_metrics.resolved());
+  }
+
+  /// Returns the vector string, or null if nothing is selected.
+  String? get vector {
+    if (!_metrics.hasAnySelection) return null;
+    return VectorBuilder.build(_metrics);
+  }
 
   void updateMetric({
     String? av,
@@ -37,7 +47,7 @@ class CvssNotifier extends ChangeNotifier {
   }
 
   void reset() {
-    _metrics = CvssMetrics.defaults();
+    _metrics = const CvssMetrics.empty();
     notifyListeners();
   }
 }
