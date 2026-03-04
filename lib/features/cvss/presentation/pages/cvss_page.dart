@@ -37,6 +37,7 @@ class _CvssPageState extends State<CvssPage> {
             final vector = _notifier.vector;
 
             return CustomScrollView(
+              physics: const ClampingScrollPhysics(),
               slivers: [
                 // App Bar
                 SliverToBoxAdapter(
